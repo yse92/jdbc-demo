@@ -1,41 +1,41 @@
 package solvd.service.impl;
 
-import solvd.dao.LoginDao;
+import solvd.dao.impl.LoginDaoImpl;
 import solvd.model.Login;
 import solvd.service.LoginService;
 
 import java.util.Collection;
 
 public class LoginServiceImpl implements LoginService {
-    private LoginDao loginDao;
+    private LoginDaoImpl loginDaoImpl;
 
     public LoginServiceImpl() {
-        loginDao  = new LoginDao();
+        loginDaoImpl = new LoginDaoImpl();
     }
 
     @Override
     public boolean save(Login entity) {
-        return loginDao.insert(entity);
+        return loginDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<Login> getAll() {
-        return loginDao.getAll();
+        return loginDaoImpl.getAll();
     }
 
     @Override
     public Login getById(Integer id) {
-        return loginDao.getEntityById(id);
+        return loginDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(Login newEntity, Integer id) {
-        loginDao.update(newEntity, id);
+        loginDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return loginDao.delete(id);
+        return loginDaoImpl.delete(id);
     }
 
 }

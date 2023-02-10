@@ -9,10 +9,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CustomConnection {
-    private static Connection connection;
-    private static BasicConnectionPool connectionPool;
+    private Connection connection;
+    private BasicConnectionPool connectionPool;
 
-    public static Connection getConnection() {
+    public CustomConnection() {
+        connection = getConnection();
+    }
+
+    public Connection getConnection() {
         try {
             ConnectionUtil c = new ConnectionUtil();
             connectionPool = BasicConnectionPool.create(c.getUrl(), c.getUser(), c.getPassword());

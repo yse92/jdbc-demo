@@ -1,40 +1,40 @@
 package solvd.service.impl;
 
-import solvd.dao.EmployeeDao;
+import solvd.dao.impl.EmployeeDaoImpl;
 import solvd.model.Employee;
 import solvd.service.EmployeeService;
 
 import java.util.Collection;
 
 public class EmployeeServiceImpl implements EmployeeService {
-    private EmployeeDao employeeDao;
+    private EmployeeDaoImpl employeeDaoImpl;
 
     public EmployeeServiceImpl() {
-        employeeDao  = new EmployeeDao();
+        employeeDaoImpl = new EmployeeDaoImpl();
     }
 
     @Override
     public boolean save(Employee entity) {
-        return employeeDao.insert(entity);
+        return employeeDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<Employee> getAll() {
-        return employeeDao.getAll();
+        return employeeDaoImpl.getAll();
     }
 
     @Override
     public Employee getById(Integer id) {
-        return employeeDao.getEntityById(id);
+        return employeeDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(Employee newEntity, Integer id) {
-        employeeDao.update(newEntity, id);
+        employeeDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return employeeDao.delete(id);
+        return employeeDaoImpl.delete(id);
     }
 }

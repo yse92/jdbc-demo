@@ -1,40 +1,40 @@
 package solvd.service.impl;
 
-import solvd.dao.BranchDao;
+import solvd.dao.impl.BranchDaoImpl;
 import solvd.model.Branch;
 import solvd.service.BranchService;
 
 import java.util.Collection;
 
 public class BranchServiceImpl implements BranchService {
-    private BranchDao branchDao;
+    private BranchDaoImpl branchDaoImpl;
 
     public BranchServiceImpl() {
-        branchDao  = new BranchDao();
+        branchDaoImpl = new BranchDaoImpl();
     }
 
     @Override
     public boolean save(Branch entity) {
-        return branchDao.insert(entity);
+        return branchDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<Branch> getAll() {
-        return branchDao.getAll();
+        return branchDaoImpl.getAll();
     }
 
     @Override
     public Branch getById(Integer id) {
-        return branchDao.getEntityById(id);
+        return branchDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(Branch newEntity, Integer id) {
-        branchDao.update(newEntity, id);
+        branchDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return branchDao.delete(id);
+        return branchDaoImpl.delete(id);
     }
 }

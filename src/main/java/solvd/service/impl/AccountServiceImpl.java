@@ -1,16 +1,16 @@
 package solvd.service.impl;
 
-import solvd.dao.AccountDao;
+import solvd.dao.impl.AccountDaoImpl;
 import solvd.model.Account;
 import solvd.service.AccountService;
 
 import java.util.Collection;
 
 public class AccountServiceImpl implements AccountService {
-    private AccountDao accountDao;
+    private AccountDaoImpl accountDao;
 
     public AccountServiceImpl() {
-        accountDao = new AccountDao();
+        accountDao = new AccountDaoImpl();
     }
 
     @Override

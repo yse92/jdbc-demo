@@ -1,12 +1,11 @@
 package solvd;
-import solvd.dao.AccountBranchDao;
-import solvd.dao.CustomerDao;
-import solvd.dao.TransactionTypeDao;
-import solvd.model.*;
-import solvd.service.*;
-import solvd.service.impl.*;
 
-import java.sql.SQLException;
+import solvd.service.AccountBranchService;
+import solvd.service.CustomerService;
+import solvd.service.LoanService;
+import solvd.service.impl.AccountBranchServiceImpl;
+import solvd.service.impl.CustomerServiceImpl;
+import solvd.service.impl.LoanServiceImpl;
 
 public class Main {
     public static void main(String args[]) {
@@ -46,8 +45,8 @@ public class Main {
 
         /* AccountBranch */
 
-        //AccountBranchService accountBranchService = new AccountBranchServiceImpl();
-        //System.out.println(accountBranchService.getById(1).toString()); //OK
+        //AccountBranchServiceImpl accountBranchService = new AccountBranchServiceImpl();
+        //System.out.println(accountBranchService.getById(4).toString()); //OK
         //new AccountBranchDao().insert(new AccountBranch(10, 5)); //OK
         //accountBranchService.getAll().forEach(System.out::println); //OK
 

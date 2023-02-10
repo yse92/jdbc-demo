@@ -1,6 +1,6 @@
 package solvd.service.impl;
 
-import solvd.dao.AccountBranchDao;
+import solvd.dao.impl.AccountBranchDaoImpl;
 import solvd.model.AccountBranch;
 import solvd.service.AccountBranchService;
 
@@ -8,49 +8,49 @@ import java.util.Collection;
 
 public class AccountBranchServiceImpl implements AccountBranchService {
 
-    private AccountBranchDao accountBranchDao;
+    private AccountBranchDaoImpl accountBranchDaoImpl;
 
     public AccountBranchServiceImpl() {
-        accountBranchDao = new AccountBranchDao();
+        accountBranchDaoImpl = new AccountBranchDaoImpl();
     }
 
     @Override
     public boolean save(AccountBranch entity) {
-        return accountBranchDao.insert(entity);
+        return accountBranchDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<AccountBranch> getAll() {
-        return accountBranchDao.getAll();
+        return accountBranchDaoImpl.getAll();
     }
 
     @Override
     public AccountBranch getById(Integer id) {
-        return accountBranchDao.getEntityById(id);
+        return accountBranchDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(AccountBranch newEntity, Integer id) {
-        accountBranchDao.update(newEntity, id);
+        accountBranchDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return accountBranchDao.delete(id);
+        return accountBranchDaoImpl.delete(id);
     }
 
     @Override
     public void deleteByAccountID(Integer accountID) {
-        accountBranchDao.deleteByAccountID(accountID);
+        accountBranchDaoImpl.deleteByAccountID(accountID);
     }
 
     @Override
     public void updateByAccountID(AccountBranch accountBranch, Integer accountID) {
-        accountBranchDao.updateByAccountID(accountBranch, accountID);
+        accountBranchDaoImpl.updateByAccountID(accountBranch, accountID);
     }
 
     @Override
     public boolean save(Integer accountID, Integer branchID) {
-        return accountBranchDao.insert(new AccountBranch(accountID, branchID));
+        return accountBranchDaoImpl.insert(new AccountBranch(accountID, branchID));
     }
 }

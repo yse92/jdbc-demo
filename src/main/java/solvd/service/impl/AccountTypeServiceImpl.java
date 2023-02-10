@@ -1,40 +1,40 @@
 package solvd.service.impl;
 
-import solvd.dao.AccountTypeDao;
+import solvd.dao.impl.AccountTypeDaoImpl;
 import solvd.model.AccountType;
 import solvd.service.AccountTypeService;
 
 import java.util.Collection;
 
 public class AccountTypeServiceImpl implements AccountTypeService {
-    private AccountTypeDao accountTypeDao;
+    private AccountTypeDaoImpl accountTypeDaoImpl;
 
     public AccountTypeServiceImpl() {
-        accountTypeDao  = new AccountTypeDao();
+        accountTypeDaoImpl = new AccountTypeDaoImpl();
     }
 
     @Override
     public boolean save(AccountType entity) {
-        return accountTypeDao.insert(entity);
+        return accountTypeDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<AccountType> getAll() {
-        return accountTypeDao.getAll();
+        return accountTypeDaoImpl.getAll();
     }
 
     @Override
     public AccountType getById(Integer id) {
-        return accountTypeDao.getEntityById(id);
+        return accountTypeDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(AccountType newEntity, Integer id) {
-        accountTypeDao.update(newEntity, id);
+        accountTypeDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return accountTypeDao.delete(id);
+        return accountTypeDaoImpl.delete(id);
     }
 }

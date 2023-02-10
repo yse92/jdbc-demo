@@ -1,40 +1,40 @@
 package solvd.service.impl;
 
-import solvd.dao.TransactionDao;
+import solvd.dao.impl.TransactionDaoImpl;
 import solvd.model.Transaction;
 import solvd.service.TransactionService;
 
 import java.util.Collection;
 
 public class TransactionServiceImpl implements TransactionService {
-    private TransactionDao transactionDao;
+    private TransactionDaoImpl transactionDaoImpl;
 
     public TransactionServiceImpl() {
-        transactionDao = new TransactionDao();
+        transactionDaoImpl = new TransactionDaoImpl();
     }
 
     @Override
     public boolean save(Transaction entity) {
-        return transactionDao.insert(entity);
+        return transactionDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<Transaction> getAll() {
-        return transactionDao.getAll();
+        return transactionDaoImpl.getAll();
     }
 
     @Override
     public Transaction getById(Integer id) {
-        return transactionDao.getEntityById(id);
+        return transactionDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(Transaction newEntity, Integer id) {
-        transactionDao.update(newEntity, id);
+        transactionDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return transactionDao.delete(id);
+        return transactionDaoImpl.delete(id);
     }
 }

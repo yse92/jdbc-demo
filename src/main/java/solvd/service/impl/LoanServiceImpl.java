@@ -1,40 +1,40 @@
 package solvd.service.impl;
 
-import solvd.dao.LoanDao;
+import solvd.dao.impl.LoanDaoImpl;
 import solvd.model.Loan;
 import solvd.service.LoanService;
 
 import java.util.Collection;
 
 public class LoanServiceImpl implements LoanService {
-    private LoanDao loanDao;
+    private LoanDaoImpl loanDaoImpl;
 
     public LoanServiceImpl() {
-        loanDao = new LoanDao();
+        loanDaoImpl = new LoanDaoImpl();
     }
 
     @Override
     public boolean save(Loan entity) {
-        return loanDao.insert(entity);
+        return loanDaoImpl.insert(entity);
     }
 
     @Override
     public Collection<Loan> getAll() {
-        return loanDao.getAll();
+        return loanDaoImpl.getAll();
     }
 
     @Override
     public Loan getById(Integer id) {
-        return loanDao.getEntityById(id);
+        return loanDaoImpl.getEntityById(id);
     }
 
     @Override
     public void update(Loan newEntity, Integer id) {
-        loanDao.update(newEntity, id);
+        loanDaoImpl.update(newEntity, id);
     }
 
     @Override
     public boolean delete(Integer id) {
-        return loanDao.delete(id);
+        return loanDaoImpl.delete(id);
     }
 }
