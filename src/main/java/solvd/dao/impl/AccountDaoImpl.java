@@ -2,13 +2,8 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.AccountDao;
-import solvd.dao.GenericDao;
-import solvd.dao.impl.AccountBranchDaoImpl;
-import solvd.exception.CustomException;
 import solvd.model.Account;
 import solvd.util.PermissionUtil;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,12 +23,7 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
             statement = getPrepareStatement(selectAllAccountsQuery);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
-                accounts.add(new Account(
-                        resultSet.getDouble("balance"),
-                        resultSet.getBoolean("isActive"),
-                        resultSet.getInt("accountType_id"),
-                        resultSet.getInt("login_id")
-                ));
+                accounts.add(getAccountFromResultSet(resultSet));
             }
             closePrepareStatement(statement);
         } catch (SQLException e) {
@@ -48,10 +38,7 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
             " login_id = ? WHERE accountID = ? ";
         try {
             statement = getPrepareStatement(updateLoginQuery);
-            statement.setDouble(1, entity.getBalance());
-            statement.setBoolean(2, entity.isActive());
-            statement.setInt(3, entity.getAccountType_id());
-            statement.setInt(4, entity.getLogin_id());
+            setStatement(statement, entity);
             statement.setInt(5, id);
             setForeignKeyChecks(false, getConnection());
             statement.executeUpdate();
@@ -70,10 +57,7 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
-                account.setBalance(rs.getDouble("balance"));
-                account.setActive(rs.getBoolean("isActive"));
-                account.setAccountType_id(rs.getInt("accountType_id"));
-                account.setLogin_id(rs.getInt("login_id"));
+                account = getAccountFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -101,15 +85,31 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
         String insertQuery = "INSERT INTO Account (balance, isActive, accountType_id, login_id) VALUES (?,?,?,?)";
         try {
             statement = getPrepareStatement(insertQuery);
-            statement.setDouble(1, entity.getBalance());
-            statement.setBoolean(2, entity.isActive());
-            statement.setInt(3, entity.getAccountType_id());
-            statement.setInt(4, entity.getLogin_id());
+            setStatement(statement, entity);
             PermissionUtil.setForeignKeyChecks(false, getConnection());
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private Account getAccountFromResultSet(ResultSet resultSet) throws SQLException {
+        double balance = resultSet.getDouble("balance");
+        boolean isActive = resultSet.getBoolean("isActive");
+        int accountType_id = resultSet.getInt("accountType_id");
+        int login_id = resultSet.getInt("login_id");
+        return new Account(balance, isActive, accountType_id, login_id);
+    }
+
+    private void setStatement(PreparedStatement statement, Account account) {
+        try {
+            statement.setDouble(1, account.getBalance());
+            statement.setBoolean(2, account.getIsActive());
+            statement.setInt(3, account.getAccountType_id());
+            statement.setInt(4, account.getLogin_id());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,11 +2,8 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.LoanDao;
-import solvd.exception.CustomException;
 import solvd.model.Loan;
 import solvd.util.PermissionUtil;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,13 +23,7 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
             statement = getPrepareStatement(selectAllLoansQuery);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
-                loans.add(new Loan(
-                    resultSet.getDouble("amount"),
-                    resultSet.getString("status"),
-                    resultSet.getInt("loanType_id"),
-                    resultSet.getInt("account_id"),
-                    resultSet.getInt("employee_id")
-                ));
+                loans.add(getLoanFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -46,11 +37,7 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
                 " account_id = ?, employee_id = ? WHERE id = ? ";
         try {
             statement = getPrepareStatement(updateLoanQuery);
-            statement.setDouble(1, entity.getAmount());
-            statement.setString(2, entity.getStatus());
-            statement.setInt(3, entity.getLoanType_id());
-            statement.setInt(4, entity.getAccount_id());
-            statement.setInt(5, entity.getEmployee_id());
+            setStatement(statement, entity);
             statement.setInt(6, id);
             setForeignKeyChecks(false, getConnection());
             statement.executeUpdate();
@@ -69,11 +56,7 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
-                loan.setAmount(rs.getDouble("amount"));
-                loan.setStatus(rs.getString("status"));
-                loan.setLoanType_id(rs.getInt("loanType_id"));
-                loan.setAccount_id(rs.getInt("account_id"));
-                loan.setEmployee_id(rs.getInt("employee_id"));
+                loan = getLoanFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -100,16 +83,33 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
         String insertQuery = "INSERT INTO Loan (amount, status, loanType_id, account_id, employee_id) VALUES (?,?,?,?,?)";
         statement = getPrepareStatement(insertQuery);
         try {
-            statement.setDouble(1, entity.getAmount());
-            statement.setString(2, entity.getStatus());
-            statement.setInt(3, entity.getLoanType_id());
-            statement.setInt(4, entity.getAccount_id());
-            statement.setInt(5, entity.getEmployee_id());
+            setStatement(statement, entity);
             PermissionUtil.setForeignKeyChecks(false, getConnection());
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private Loan getLoanFromResultSet(ResultSet resultSet) throws SQLException {
+        double amount = resultSet.getDouble("amount");
+        String status = resultSet.getString("status");
+        int loanType_id = resultSet.getInt("loanType_id");
+        int account_id = resultSet.getInt("account_id");
+        int employee_id = resultSet.getInt("employee_id");
+        return new Loan(amount, status, loanType_id, account_id, employee_id);
+    }
+
+    private void setStatement(PreparedStatement statement, Loan entity) {
+        try {
+            statement.setDouble(1, entity.getAmount());
+            statement.setString(2, entity.getStatus());
+            statement.setInt(3, entity.getLoanType_id());
+            statement.setInt(4, entity.getAccount_id());
+            statement.setInt(5, entity.getEmployee_id());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

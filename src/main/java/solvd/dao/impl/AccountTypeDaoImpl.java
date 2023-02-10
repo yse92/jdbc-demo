@@ -2,10 +2,7 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.AccountTypeDao;
-import solvd.exception.CustomException;
 import solvd.model.AccountType;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

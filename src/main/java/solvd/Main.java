@@ -1,11 +1,14 @@
 package solvd;
 
+import solvd.model.Transaction;
 import solvd.service.AccountBranchService;
 import solvd.service.CustomerService;
 import solvd.service.LoanService;
+import solvd.service.TransactionService;
 import solvd.service.impl.AccountBranchServiceImpl;
 import solvd.service.impl.CustomerServiceImpl;
 import solvd.service.impl.LoanServiceImpl;
+import solvd.service.impl.TransactionServiceImpl;
 
 public class Main {
     public static void main(String args[]) {

@@ -2,11 +2,7 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.BranchDao;
-import solvd.dao.GenericDao;
-import solvd.exception.CustomException;
 import solvd.model.Branch;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

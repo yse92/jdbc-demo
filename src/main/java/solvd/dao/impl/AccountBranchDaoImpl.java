@@ -2,10 +2,8 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.AccountBranchDao;
-import solvd.exception.CustomException;
 import solvd.model.AccountBranch;
 import solvd.util.PermissionUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -39,6 +37,10 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
     @Override
     public void update(AccountBranch entity, Integer id) {
         String updateAccountBranchQuery = "UPDATE AccountBranch SET accountID = ? , branchID = ? WHERE id = ?";
+        setStatement(entity, id, updateAccountBranchQuery);
+    }
+
+    private void setStatement(AccountBranch entity, Integer id, String updateAccountBranchQuery) {
         try {
             statement = getPrepareStatement(updateAccountBranchQuery);
             statement.setInt(1, entity.getAccountID());
@@ -55,16 +57,7 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
     public void updateByAccountID(AccountBranch entity, Integer accountID) {
         String updateAccountBranchByAccountIDQuery = "UPDATE AccountBranch SET accountID = ? , " +
                 "branchID = ? WHERE accountID = ?";
-        try {
-            statement = getPrepareStatement(updateAccountBranchByAccountIDQuery);
-            statement.setInt(1, entity.getAccountID());
-            statement.setInt(2, entity.getBranchID());
-            statement.setInt(3, accountID);
-            statement.executeUpdate();
-            closePrepareStatement(statement);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        setStatement(entity, accountID, updateAccountBranchByAccountIDQuery);
     }
 
     @Override

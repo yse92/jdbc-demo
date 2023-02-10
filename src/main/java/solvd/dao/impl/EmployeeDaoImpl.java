@@ -2,10 +2,7 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.EmployeeDao;
-import solvd.exception.CustomException;
 import solvd.model.Employee;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,13 +20,7 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
             statement = getPrepareStatement(selectAllCustomersQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                employees.add(new Employee(
-                    resultSet.getString("firstName"),
-                    resultSet.getString("lastName"),
-                    resultSet.getString("position"),
-                    resultSet.getFloat("salary"),
-                    resultSet.getInt("branch_id")
-                ));
+                employees.add(getEmployeeFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,11 +34,7 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
                 "salary = ? , branch_id = ? WHERE id = ? ";
         try {
             statement = getPrepareStatement(updateCustomerQuery);
-            statement.setString(1, employee.getFirstName());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getPosition());
-            statement.setFloat(4, employee.getSalary());
-            statement.setInt(5, employee.getBranch_id());
+            setStatement(statement, employee);
             statement.setInt(6, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -94,15 +81,32 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
         String insertQuery = "INSERT INTO Employee (firstName, lastName, position, salary, branch_id) VALUES (?, ?, ?, ?, ?)";
         statement = getPrepareStatement(insertQuery);
         try {
-            statement.setString(1, employee.getFirstName());
-            statement.setString(2, employee.getLastName());
-            statement.setString(3, employee.getPosition());
-            statement.setFloat(4, employee.getSalary());
-            statement.setInt(5, employee.getBranch_id());
+            setStatement(statement, employee);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private Employee getEmployeeFromResultSet(ResultSet resultSet) throws SQLException {
+                String firstName = resultSet.getString("firstName");
+                String lastName = resultSet.getString("lastName");
+                String position = resultSet.getString("position");
+                float salary = resultSet.getFloat("salary");
+                int branch_id = resultSet.getInt("branch_id");
+        return new Employee(firstName, lastName, position, salary, branch_id);
+    }
+
+    private void setStatement(PreparedStatement statement, Employee employee) {
+        try {
+            statement.setString(1, employee.getFirstName());
+            statement.setString(2, employee.getLastName());
+            statement.setString(3, employee.getPosition());
+            statement.setFloat(4, employee.getSalary());
+            statement.setInt(5, employee.getBranch_id());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

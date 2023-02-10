@@ -2,13 +2,8 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.TransactionDao;
-import solvd.exception.CustomException;
 import solvd.model.Transaction;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +18,7 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
             statement = getPrepareStatement(selectAllCustomersQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                transactions.add(new Transaction(
-                        resultSet.getDouble("amount"),
-                        resultSet.getDate("transaction_date"),
-                        resultSet.getInt("transactionType_id"),
-                        resultSet.getInt("account_id"),
-                        resultSet.getInt("transactionErrorLog_id"),
-                        resultSet.getInt("employee_id")
-                ));
+                transactions.add(getTransactionFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,12 +32,7 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
         "transactionType_id = ?, account_id = ? , transactionErrorLog_id = ?, employee_id = ? WHERE id = ? ";
         try {
             statement = getPrepareStatement(updateTransactionQuery);
-            statement.setDouble(1, entity.getAmount());
-            statement.setDate(2, entity.getTransaction_date());
-            statement.setInt(3, entity.getTransactionType_id());
-            statement.setInt(4, entity.getAccount_id());
-            statement.setInt(5, entity.getTransactionErrorLog_id());
-            statement.setInt(6, entity.getEmployee_id());
+            setStatement(statement, entity);
             statement.setInt(7, id);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -99,12 +82,7 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
             "VALUES (?, ?, ?, ?, ?, ?)";
         try {
             statement = getPrepareStatement(insertQuery);
-            statement.setDouble(1, entity.getAmount());
-            statement.setDate(2, entity.getTransaction_date());
-            statement.setInt(3, entity.getTransactionType_id());
-            statement.setInt(4, entity.getTransactionErrorLog_id());
-            statement.setInt(5, entity.getAccount_id());
-            statement.setInt(6, entity.getEmployee_id());
+            setStatement(statement, entity);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,6 +96,29 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
             statement = getPrepareStatement(deleteTransactionQuery);
             statement.setInt(1, id);
             statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Transaction getTransactionFromResultSet(ResultSet resultSet) throws SQLException {
+        double amount = resultSet.getDouble("amount");
+        Date transaction_date = resultSet.getDate("transaction_date");
+        int transactionType_id = resultSet.getInt("transactionType_id");
+        int account_id = resultSet.getInt("account_id");
+        int transactionErrorLog_id = resultSet.getInt("transactionErrorLog_id");
+        int employee_id = resultSet.getInt("employee_id");
+        return new Transaction(amount, transaction_date, transactionType_id, transactionErrorLog_id, account_id, employee_id);
+    }
+
+    private void setStatement(PreparedStatement statement, Transaction transaction) {
+        try {
+            statement.setDouble(1, transaction.getAmount());
+            statement.setDate(2, transaction.getTransaction_date());
+            statement.setInt(3, transaction.getTransactionType_id());
+            statement.setInt(4, transaction.getAccount_id());
+            statement.setInt(5, transaction.getTransactionErrorLog_id());
+            statement.setInt(6, transaction.getEmployee_id());
         } catch (SQLException e) {
             e.printStackTrace();
         }

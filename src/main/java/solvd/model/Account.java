@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Account {
-    private double balance;
-    private boolean isActive;
-    private int accountType_id;
-    private int login_id;
+    private Double balance;
+    private Boolean isActive;
+    private Integer accountType_id;
+    private Integer login_id;
 
     public Account() {
     }

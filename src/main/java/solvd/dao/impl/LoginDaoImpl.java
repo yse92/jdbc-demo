@@ -2,10 +2,7 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.LoginDao;
-import solvd.exception.CustomException;
 import solvd.model.Login;
-
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,11 +20,7 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
             statement = getPrepareStatement(selectAllLoginsQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                logins.add(new Login(
-                    resultSet.getString("name"),
-                    resultSet.getString("password"),
-                    resultSet.getInt("customer_id")
-                ));
+                logins.add(getLoginFromResultSet(resultSet));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,13 +78,28 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
         String insertQuery = "INSERT INTO Login (name, password, customer_id) VALUES (?,?,?)";
         try {
             statement = getPrepareStatement(insertQuery);
-            statement.setString(1, login.getName());
-            statement.setString(2, login.getPassword());
-            statement.setInt(3, login.getCustomer_id());
+            setStatement(statement, login);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private Login getLoginFromResultSet(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("name");
+        String password = resultSet.getString("password");
+        int customer_id = resultSet.getInt("customer_id");
+        return new Login(name, password, customer_id);
+    }
+
+    private void setStatement(PreparedStatement statement, Login login) {
+        try {
+            statement.setString(1, login.getName());
+            statement.setString(2, login.getPassword());
+            statement.setInt(3, login.getCustomer_id());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
