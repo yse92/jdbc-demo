@@ -3,21 +3,24 @@ package solvd.dao.impl;
 import solvd.connection.CustomConnection;
 import solvd.dao.EmployeeDao;
 import solvd.model.Employee;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
+public class EmployeeDaoImpl implements EmployeeDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Employee> getAll() {
-        String selectAllCustomersQuery = "SELECT * FROM Employee";
         List<Employee> employees = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllCustomersQuery);
+            statement = connection.prepareStatement(selectAllEmployeesQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 employees.add(getEmployeeFromResultSet(resultSet));
@@ -30,10 +33,8 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
 
     @Override
     public void update(Employee employee, Integer id) {
-        String updateCustomerQuery = "UPDATE Employee SET firstName = ? , lastName = ? , position = ?, " +
-                "salary = ? , branch_id = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateCustomerQuery);
+            statement = connection.prepareStatement(updateEmployeeQuery);
             setStatement(statement, employee);
             statement.setInt(6, id);
             statement.executeUpdate();
@@ -44,10 +45,9 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
 
     @Override
     public Employee getEntityById(Integer id) {
-        String getCustomerQuery = "SELECT * FROM Employee WHERE id = ?";
         Employee employee = new Employee();
         try {
-            statement = getPrepareStatement(getCustomerQuery);
+            statement = connection.prepareStatement(getEmployeeQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -65,9 +65,8 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
 
     @Override
     public boolean delete(Integer id) {
-        String deleteEmployeeQuery = "DELETE FROM Employee WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteEmployeeQuery);
+            statement = connection.prepareStatement(deleteEmployeeQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -78,9 +77,8 @@ public class EmployeeDaoImpl extends CustomConnection implements EmployeeDao {
 
     @Override
     public boolean insert(Employee employee) {
-        String insertQuery = "INSERT INTO Employee (firstName, lastName, position, salary, branch_id) VALUES (?, ?, ?, ?, ?)";
-        statement = getPrepareStatement(insertQuery);
         try {
+            statement = connection.prepareStatement(insertEmployeeQuery);
             setStatement(statement, employee);
             return statement.execute();
         } catch (SQLException e) {

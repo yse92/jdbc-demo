@@ -3,21 +3,24 @@ package solvd.dao.impl;
 import solvd.connection.CustomConnection;
 import solvd.dao.LoginDao;
 import solvd.model.Login;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class LoginDaoImpl extends CustomConnection implements LoginDao {
+public class LoginDaoImpl implements LoginDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Login> getAll() {
-        String selectAllLoginsQuery = "SELECT * FROM Login";
         List<Login> logins = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllLoginsQuery);
+            statement = connection.prepareStatement(selectAllLoginsQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 logins.add(getLoginFromResultSet(resultSet));
@@ -30,9 +33,8 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
 
     @Override
     public void update(Login login, Integer id) {
-        String updateLoginQuery = "UPDATE Login SET name = ? , password = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateLoginQuery);
+            statement = connection.prepareStatement(updateLoginQuery);
             statement.setString(1, login.getName());
             statement.setString(2, login.getPassword());
             statement.setInt(3, id);
@@ -44,10 +46,9 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
 
     @Override
     public Login getEntityById(Integer id) {
-        String getEntityByIdQuery = "SELECT * FROM Login WHERE id = ?";
         Login login = new Login();
         try {
-            statement = getPrepareStatement(getEntityByIdQuery);
+            statement = connection.prepareStatement(getLoginByIdQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -62,9 +63,8 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
 
     @Override
     public boolean delete(Integer id) {
-        String deleteLoginQuery = "DELETE FROM Login WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteLoginQuery);
+            statement = connection.prepareStatement(deleteLoginQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException ex) {
@@ -75,9 +75,8 @@ public class LoginDaoImpl extends CustomConnection implements LoginDao {
 
     @Override
     public boolean insert(Login login) {
-        String insertQuery = "INSERT INTO Login (name, password, customer_id) VALUES (?,?,?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertLoginQuery);
             setStatement(statement, login);
             return statement.execute();
         } catch (SQLException e) {

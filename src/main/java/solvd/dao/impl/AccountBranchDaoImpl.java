@@ -10,16 +10,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class AccountBranchDaoImpl extends CustomConnection implements AccountBranchDao {
+public class AccountBranchDaoImpl implements AccountBranchDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<AccountBranch> getAll() {
-        String selectAllAccountBranchQuery = "SELECT * FROM AccountBranch";
         List<AccountBranch> accountBranches = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllAccountBranchQuery);
+            statement = connection.prepareStatement(selectAllAccountBranchQuery);
             ResultSet resultSet = statement.executeQuery(selectAllAccountBranchQuery);
             while (resultSet.next()) {
                 accountBranches.add(new AccountBranch(
@@ -27,7 +28,7 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
                         resultSet.getInt("branchID")
                 ));
             }
-            closePrepareStatement(statement);
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -36,36 +37,19 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
 
     @Override
     public void update(AccountBranch entity, Integer id) {
-        String updateAccountBranchQuery = "UPDATE AccountBranch SET accountID = ? , branchID = ? WHERE id = ?";
         setStatement(entity, id, updateAccountBranchQuery);
-    }
-
-    private void setStatement(AccountBranch entity, Integer id, String updateAccountBranchQuery) {
-        try {
-            statement = getPrepareStatement(updateAccountBranchQuery);
-            statement.setInt(1, entity.getAccountID());
-            statement.setInt(2, entity.getBranchID());
-            statement.setInt(3, id);
-            statement.executeUpdate();
-            closePrepareStatement(statement);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void updateByAccountID(AccountBranch entity, Integer accountID) {
-        String updateAccountBranchByAccountIDQuery = "UPDATE AccountBranch SET accountID = ? , " +
-                "branchID = ? WHERE accountID = ?";
         setStatement(entity, accountID, updateAccountBranchByAccountIDQuery);
     }
 
     @Override
     public AccountBranch getEntityById(Integer id) {
-        String getCustomerQuery = "SELECT * FROM AccountBranch WHERE id = ?";
         AccountBranch accountBranch = new AccountBranch();
         try {
-            statement = getPrepareStatement(getCustomerQuery);
+            statement = connection.prepareStatement(getAccountBranchQuery);
             ResultSet rs = statement.executeQuery();
             statement.setInt(1, id);
             while(rs.next()) {
@@ -80,9 +64,8 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
 
     @Override
     public boolean delete(Integer id) {
-        String deleteAccountBranchQuery = "DELETE FROM AccountBranch WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteAccountBranchQuery);
+            statement = connection.prepareStatement(deleteAccountBranchQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -92,10 +75,9 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
     }
 
     @Override
-    public void deleteByAccountID(Integer accountID, Connection connection) {
-        String deleteAccountBranchQuery = "DELETE FROM AccountBranch WHERE accountID = ?";
+    public void deleteByAccountID(Integer accountID) {
         try {
-            statement = getPrepareStatement(deleteAccountBranchQuery);
+            statement = connection.prepareStatement(deleteAccountBranchQuery);
             statement.setInt(1, accountID);
             PermissionUtil.setForeignKeyChecks(false, connection);
             statement.execute();
@@ -106,31 +88,29 @@ public class AccountBranchDaoImpl extends CustomConnection implements AccountBra
     }
 
     @Override
-    public void deleteByAccountID(Integer accountID) {
-        String deleteAccountBranchQuery = "DELETE FROM AccountBranch WHERE accountID = ?";
-        statement = getPrepareStatement(deleteAccountBranchQuery);
-        try {
-            statement.setInt(1, accountID);
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
-            statement.execute();
-            PermissionUtil.setForeignKeyChecks(true, getConnection());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public boolean insert(AccountBranch entity) {
-        String insertQuery = "INSERT INTO AccountBranch (accountID, branchID) VALUES (?,?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertAccountBranchQuery);
             statement.setInt(1, entity.getAccountID());
             statement.setInt(2, entity.getBranchID());
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private void setStatement(AccountBranch entity, Integer id, String updateAccountBranchQuery) {
+        try {
+            statement = connection.prepareStatement(updateAccountBranchQuery);
+            statement.setInt(1, entity.getAccountID());
+            statement.setInt(2, entity.getBranchID());
+            statement.setInt(3, id);
+            statement.executeUpdate();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

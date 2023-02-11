@@ -3,21 +3,23 @@ package solvd.dao.impl;
 import solvd.connection.CustomConnection;
 import solvd.dao.AccountTypeDao;
 import solvd.model.AccountType;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class AccountTypeDaoImpl extends CustomConnection implements AccountTypeDao {
+public class AccountTypeDaoImpl implements AccountTypeDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<AccountType> getAll() {
-        String selectAllTypesQuery = "SELECT * FROM AccountType";
         List<AccountType> accountTypes = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllTypesQuery);
+            statement = connection.prepareStatement(selectAllAccountTypesQuery);
             ResultSet resultSet =  statement.executeQuery();
             while (resultSet.next()) {
                 accountTypes.add(new AccountType(
@@ -32,9 +34,8 @@ public class AccountTypeDaoImpl extends CustomConnection implements AccountTypeD
 
     @Override
     public void update(AccountType entity, Integer id) {
-        String updateLoginQuery = "UPDATE AccountType SET description = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateLoginQuery);
+            statement = connection.prepareStatement(updateAccountTypeQuery);
             statement.setString(1, entity.getDescription());
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -45,10 +46,9 @@ public class AccountTypeDaoImpl extends CustomConnection implements AccountTypeD
 
     @Override
     public AccountType getEntityById(Integer id) {
-        String getEntityByIdQuery = "SELECT * FROM AccountType WHERE id = ?";
         AccountType accountType = new AccountType();
         try {
-            statement = getPrepareStatement(getEntityByIdQuery);
+            statement = connection.prepareStatement(getAccountTypeByIdQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -62,9 +62,8 @@ public class AccountTypeDaoImpl extends CustomConnection implements AccountTypeD
 
     @Override
     public boolean delete(Integer id) {
-        String deleteTypeQuery = "DELETE FROM AccountType WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteTypeQuery);
+            statement = connection.prepareStatement(deleteAccountTypeQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -75,9 +74,8 @@ public class AccountTypeDaoImpl extends CustomConnection implements AccountTypeD
 
     @Override
     public boolean insert(AccountType entity) {
-        String insertQuery = "INSERT INTO AccountType (description) VALUES (?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertAccountTypeQuery);
             statement.setString(1, entity.getDescription());
             return statement.execute();
         } catch (SQLException e) {

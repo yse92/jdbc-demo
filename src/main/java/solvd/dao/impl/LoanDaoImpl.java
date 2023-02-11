@@ -4,6 +4,8 @@ import solvd.connection.CustomConnection;
 import solvd.dao.LoanDao;
 import solvd.model.Loan;
 import solvd.util.PermissionUtil;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,16 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static solvd.util.PermissionUtil.setForeignKeyChecks;
+import static solvd.util.QueryCollection.*;
 
-public class LoanDaoImpl extends CustomConnection implements LoanDao {
+public class LoanDaoImpl implements LoanDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Loan> getAll() {
-        String selectAllLoansQuery = "SELECT * FROM Loan";
         List<Loan> loans = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllLoansQuery);
+            statement = connection.prepareStatement(selectAllLoansQuery);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 loans.add(getLoanFromResultSet(resultSet));
@@ -33,15 +36,13 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
 
     @Override
     public void update(Loan entity, Integer id) {
-        String updateLoanQuery = "UPDATE Loan SET amount = ? , status = ?, loanType_id = ?," +
-                " account_id = ?, employee_id = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateLoanQuery);
+            statement = connection.prepareStatement(updateLoanQuery);
             setStatement(statement, entity);
             statement.setInt(6, id);
-            setForeignKeyChecks(false, getConnection());
+            setForeignKeyChecks(false, connection);
             statement.executeUpdate();
-            setForeignKeyChecks(true, getConnection());
+            setForeignKeyChecks(true, connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -49,10 +50,9 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
 
     @Override
     public Loan getEntityById(Integer id) {
-        String getEntityByIdQuery = "SELECT * FROM Loan WHERE id = ?";
         Loan loan = new Loan();
         try {
-            statement = getPrepareStatement(getEntityByIdQuery);
+            statement = connection.prepareStatement(getLoanByIdQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -66,11 +66,10 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
 
     @Override
     public boolean delete(Integer id) {
-        String deleteLoanQuery = "DELETE FROM Loan WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteLoanQuery);
+            statement = connection.prepareStatement(deleteLoanQuery);
             statement.setInt(1, id);
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,11 +79,10 @@ public class LoanDaoImpl extends CustomConnection implements LoanDao {
 
     @Override
     public boolean insert(Loan entity) {
-        String insertQuery = "INSERT INTO Loan (amount, status, loanType_id, account_id, employee_id) VALUES (?,?,?,?,?)";
-        statement = getPrepareStatement(insertQuery);
         try {
+            statement = connection.prepareStatement(insertLoanQuery);
             setStatement(statement, entity);
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();

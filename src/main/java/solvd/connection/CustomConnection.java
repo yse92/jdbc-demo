@@ -1,19 +1,23 @@
 package solvd.connection;
 
-import solvd.connection.BasicConnectionPool;
 import solvd.exception.CustomException;
 import solvd.util.ConnectionUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CustomConnection {
-    private Connection connection;
-    private BasicConnectionPool connectionPool;
+    private static BasicConnectionPool connectionPool;
+    private static CustomConnection instance = null;
 
-    public CustomConnection() {
-        connection = getConnection();
+    private CustomConnection() {
+
+    }
+
+    public static CustomConnection getInstance() {
+        if (instance==null)
+            instance = new CustomConnection();
+        return instance;
     }
 
     public Connection getConnection() {
@@ -23,26 +27,6 @@ public class CustomConnection {
             return connectionPool.getConnection();
         } catch (SQLException e) {
             throw new CustomException("Error ", e);
-        }
-    }
-
-    public PreparedStatement getPrepareStatement(String sql) {
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ps;
-    }
-
-    public void closePrepareStatement(PreparedStatement ps) {
-        if (ps != null) {
-            try {
-                ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 }

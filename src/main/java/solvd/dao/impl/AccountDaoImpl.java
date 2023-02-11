@@ -4,28 +4,29 @@ import solvd.connection.CustomConnection;
 import solvd.dao.AccountDao;
 import solvd.model.Account;
 import solvd.util.PermissionUtil;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import static solvd.util.PermissionUtil.setForeignKeyChecks;
+import static solvd.util.QueryCollection.*;
 
-public class AccountDaoImpl extends CustomConnection implements AccountDao {
+public class AccountDaoImpl implements AccountDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Account> getAll() {
-        String selectAllAccountsQuery = "SELECT * FROM Account";
         List<Account> accounts = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllAccountsQuery);
+            statement = connection.prepareStatement(selectAllAccountsQuery);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 accounts.add(getAccountFromResultSet(resultSet));
             }
-            closePrepareStatement(statement);
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -34,15 +35,13 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
 
     @Override
     public void update(Account entity, Integer id) {
-        String updateLoginQuery = "UPDATE Account SET balance = ? , isActive = ?, accountType_id = ?," +
-            " login_id = ? WHERE accountID = ? ";
         try {
-            statement = getPrepareStatement(updateLoginQuery);
+            statement = connection.prepareStatement(updateAccountQuery);
             setStatement(statement, entity);
             statement.setInt(5, id);
-            setForeignKeyChecks(false, getConnection());
+            setForeignKeyChecks(false, connection);
             statement.executeUpdate();
-            setForeignKeyChecks(true, getConnection());
+            setForeignKeyChecks(true, connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,10 +49,9 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
 
     @Override
     public Account getEntityById(Integer id) {
-        String getEntityByIdQuery = "SELECT * FROM Account WHERE accountID = ?";
         Account account = new Account();
         try {
-            statement = getPrepareStatement(getEntityByIdQuery);
+            statement = connection.prepareStatement(getAccountByIdQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -67,12 +65,11 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
 
     @Override
     public boolean delete(Integer id) {
-        String deleteAccountQuery = "DELETE FROM Account WHERE accountID = ?";
         try {
-            statement = getPrepareStatement(deleteAccountQuery);
+            statement = connection.prepareStatement(deleteAccountQuery);
             statement.setInt(1, id);
-            new AccountBranchDaoImpl().deleteByAccountID(id, getConnection());
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            new AccountBranchDaoImpl().deleteByAccountID(id);
+            PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,11 +79,10 @@ public class AccountDaoImpl extends CustomConnection implements AccountDao {
 
     @Override
     public boolean insert(Account entity) {
-        String insertQuery = "INSERT INTO Account (balance, isActive, accountType_id, login_id) VALUES (?,?,?,?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertAccountQuery);
             setStatement(statement, entity);
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
         } catch (SQLException e) {
             e.printStackTrace();

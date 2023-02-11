@@ -11,7 +11,7 @@ import solvd.service.impl.LoanServiceImpl;
 import solvd.service.impl.TransactionServiceImpl;
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         /* Employee */
 
         //EmployeeServiceImpl employeeService = new EmployeeServiceImpl();
@@ -49,7 +49,7 @@ public class Main {
         /* AccountBranch */
 
         //AccountBranchServiceImpl accountBranchService = new AccountBranchServiceImpl();
-        //System.out.println(accountBranchService.getById(4).toString()); //OK
+        //System.out.println(accountBranchService.getById(5).toString()); //OK
         //new AccountBranchDao().insert(new AccountBranch(10, 5)); //OK
         //accountBranchService.getAll().forEach(System.out::println); //OK
 

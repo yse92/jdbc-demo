@@ -3,22 +3,25 @@ package solvd.dao.impl;
 import solvd.connection.CustomConnection;
 import solvd.dao.CustomerDao;
 import solvd.model.Customer;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import static solvd.util.QueryCollection.*;
 
-public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
+public class CustomerDaoImpl implements CustomerDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Customer> getAll() {
-        String selectAllCustomersQuery = "SELECT * FROM CUSTOMER";
         List<Customer> customers = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllCustomersQuery);
+            statement = connection.prepareStatement(selectAllCustomersQuery);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
+            while(resultSet.next()) {
                 customers.add(getCustomerFromResultSet(resultSet));
             }
         } catch (SQLException e) {
@@ -29,9 +32,8 @@ public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
 
     @Override
     public void update(Customer customer, Integer id) {
-        String updateCustomerQuery = "UPDATE Customer SET firstName = ? , lastName = ? , phone = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateCustomerQuery);
+            statement = connection.prepareStatement(updateCustomerQuery);
             setStatement(statement, customer);
             statement.setInt(4, id);
             statement.executeUpdate();
@@ -42,10 +44,9 @@ public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
 
     @Override
     public Customer getEntityById(Integer id) {
-        String getCustomerQuery = "SELECT * FROM Customer WHERE id = ?";
         Customer customer = new Customer();
         try {
-            statement = getPrepareStatement(getCustomerQuery);
+            statement = connection.prepareStatement(getCustomerQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -61,9 +62,8 @@ public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
 
     @Override
     public boolean delete(Integer id) {
-        String deleteCustomerQuery = "DELETE FROM Customer WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteCustomerQuery);
+            statement = connection.prepareStatement(deleteCustomerQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -74,9 +74,8 @@ public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
 
     @Override
     public boolean insert(Customer customer) {
-        String insertQuery = "INSERT INTO Customer (firstName, lastName, phone) VALUES (?, ?, ?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertCustomerQuery);
             setStatement(statement, customer);
             return statement.execute();
         } catch (SQLException e) {
@@ -92,6 +91,7 @@ public class CustomerDaoImpl extends CustomConnection implements CustomerDao {
         return new Customer(firstName, lastName, phone);
     }
 
+    
     private void setStatement(PreparedStatement statement, Customer customer) {
         try {
             statement.setString(1, customer.getFirstName());

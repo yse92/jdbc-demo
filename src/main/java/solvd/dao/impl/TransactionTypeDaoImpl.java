@@ -2,27 +2,25 @@ package solvd.dao.impl;
 
 import solvd.connection.CustomConnection;
 import solvd.dao.TransactionTypeDao;
-import solvd.dao.impl.TransactionDaoImpl;
-import solvd.exception.CustomException;
 import solvd.model.TransactionType;
 import solvd.util.PermissionUtil;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class TransactionTypeDaoImpl extends CustomConnection implements TransactionTypeDao {
+public class TransactionTypeDaoImpl implements TransactionTypeDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<TransactionType> getAll() {
-        String selectAllTransactionTypesQuery = "SELECT * FROM TransactionType";
         List<TransactionType> transactionTypes = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllTransactionTypesQuery);
+            statement = connection.prepareStatement(selectAllTransactionTypesQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 transactionTypes.add(new TransactionType(
@@ -37,9 +35,8 @@ public class TransactionTypeDaoImpl extends CustomConnection implements Transact
 
     @Override
     public void update(TransactionType entity, Integer id) {
-        String updateTransactionTypeQuery = "UPDATE TransactionType SET description = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateTransactionTypeQuery);
+            statement = connection.prepareStatement(updateTransactionTypeQuery);
             statement.setString(1, entity.getDescription());
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -50,10 +47,9 @@ public class TransactionTypeDaoImpl extends CustomConnection implements Transact
 
     @Override
     public TransactionType getEntityById(Integer id) {
-        String getEntityByIdQuery = "SELECT * FROM TransactionType WHERE id = ?";
         TransactionType transactionType = new TransactionType();
         try {
-            statement = getPrepareStatement(getEntityByIdQuery);
+            statement = connection.prepareStatement(getTransactionTypeByIdQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -67,11 +63,10 @@ public class TransactionTypeDaoImpl extends CustomConnection implements Transact
 
     @Override
     public boolean delete(Integer id) {
-        String deleteTypeQuery = "DELETE FROM TransactionType WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteTypeQuery);
+            statement = connection.prepareStatement(deleteTransactionTypeQuery);
             statement.setInt(1, id);
-            PermissionUtil.setForeignKeyChecks(false, getConnection());
+            PermissionUtil.setForeignKeyChecks(false, connection);
             new TransactionDaoImpl().deleteByTypeId(id);
             return statement.execute();
         } catch (SQLException e) {
@@ -82,9 +77,8 @@ public class TransactionTypeDaoImpl extends CustomConnection implements Transact
 
     @Override
     public boolean insert(TransactionType entity) {
-        String insertQuery = "INSERT INTO TransactionType (description) VALUES (?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertTransactionTypeQuery);
             statement.setString(1, entity.getDescription());
             return statement.execute();
         } catch (SQLException e) {

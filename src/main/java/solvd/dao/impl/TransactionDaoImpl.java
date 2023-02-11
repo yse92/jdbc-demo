@@ -6,16 +6,17 @@ import solvd.model.Transaction;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import static solvd.util.QueryCollection.*;
 
-public class TransactionDaoImpl extends CustomConnection implements TransactionDao {
+public class TransactionDaoImpl implements TransactionDao {
+    Connection connection = CustomConnection.getInstance().getConnection();
     PreparedStatement statement;
 
     @Override
     public List<Transaction> getAll() {
-        String selectAllCustomersQuery = "SELECT * FROM Transaction";
         List<Transaction> transactions = new ArrayList<>();
         try {
-            statement = getPrepareStatement(selectAllCustomersQuery);
+            statement = connection.prepareStatement(selectAllTransactionsQuery);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 transactions.add(getTransactionFromResultSet(resultSet));
@@ -28,10 +29,8 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
 
     @Override
     public void update(Transaction entity, Integer id) {
-        String updateTransactionQuery = "UPDATE Transaction SET amount = ? , transaction_date = ? , " +
-        "transactionType_id = ?, account_id = ? , transactionErrorLog_id = ?, employee_id = ? WHERE id = ? ";
         try {
-            statement = getPrepareStatement(updateTransactionQuery);
+            statement = connection.prepareStatement(updateTransactionQuery);
             setStatement(statement, entity);
             statement.setInt(7, id);
             statement.executeUpdate();
@@ -42,10 +41,9 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
 
     @Override
     public Transaction getEntityById(Integer id) {
-        String getTransactionQuery = "SELECT * FROM Transaction WHERE id = ?";
         Transaction transaction = new Transaction();
         try {
-            statement = getPrepareStatement(getTransactionQuery);
+            statement = connection.prepareStatement(getTransactionQuery);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -64,9 +62,8 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
 
     @Override
     public boolean delete(Integer id) {
-        String deleteTransactionQuery = "DELETE FROM Transaction WHERE id = ?";
         try {
-            statement = getPrepareStatement(deleteTransactionQuery);
+            statement = connection.prepareStatement(deleteTransactionQuery);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -77,11 +74,8 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
 
     @Override
     public boolean insert(Transaction entity) {
-        String insertQuery = "INSERT INTO Transaction " +
-        "(amount, transaction_date, transactionType_id, transactionErrorLog_id, account_id, employee_id) " +
-            "VALUES (?, ?, ?, ?, ?, ?)";
         try {
-            statement = getPrepareStatement(insertQuery);
+            statement = connection.prepareStatement(insertTransactionQuery);
             setStatement(statement, entity);
             return statement.execute();
         } catch (SQLException e) {
@@ -91,9 +85,8 @@ public class TransactionDaoImpl extends CustomConnection implements TransactionD
     }
 
     public void deleteByTypeId(Integer id) {
-        String deleteTransactionQuery = "DELETE FROM Transaction WHERE transactionType_id = ?";
         try {
-            statement = getPrepareStatement(deleteTransactionQuery);
+            statement = connection.prepareStatement(deleteTransactionByTypeIdQuery);
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {
