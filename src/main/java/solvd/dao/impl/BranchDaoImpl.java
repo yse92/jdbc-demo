@@ -21,7 +21,7 @@ public class BranchDaoImpl implements BranchDao {
     public List<Branch> getAll() {
         List<Branch> branches = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllBranchesQuery);
+            statement = connection.prepareStatement(SELECT_ALL_BRANCHES_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 branches.add(new Branch(
@@ -38,7 +38,7 @@ public class BranchDaoImpl implements BranchDao {
     @Override
     public void update(Branch entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateBranchQuery);
+            statement = connection.prepareStatement(UPDATE_BRANCH_QUERY);
             statement.setString(1, entity.getAdress());
             statement.setString(2, entity.getPhone());
             statement.setInt(3, id);
@@ -54,7 +54,7 @@ public class BranchDaoImpl implements BranchDao {
     public Branch getEntityById(Integer id) {
         Branch branch = new Branch();
         try {
-            statement = connection.prepareStatement(getBranchByIdQuery);
+            statement = connection.prepareStatement(GET_BRANCH_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -70,7 +70,7 @@ public class BranchDaoImpl implements BranchDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteBranchQuery);
+            statement = connection.prepareStatement(DELETE_BRANCH_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class BranchDaoImpl implements BranchDao {
     @Override
     public boolean insert(Branch entity) {
         try {
-            statement = connection.prepareStatement(insertBranchQuery);
+            statement = connection.prepareStatement(INSERT_BRANCH_QUERY);
             statement.setString(1, entity.getAdress());
             statement.setString(2, entity.getPhone());
             return statement.execute();

@@ -20,8 +20,8 @@ public class AccountBranchDaoImpl implements AccountBranchDao {
     public List<AccountBranch> getAll() {
         List<AccountBranch> accountBranches = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllAccountBranchQuery);
-            ResultSet resultSet = statement.executeQuery(selectAllAccountBranchQuery);
+            statement = connection.prepareStatement(SELECT_FROM_ACCOUNT_BRANCH);
+            ResultSet resultSet = statement.executeQuery(SELECT_FROM_ACCOUNT_BRANCH);
             while (resultSet.next()) {
                 accountBranches.add(new AccountBranch(
                         resultSet.getInt("accountID"),
@@ -37,19 +37,19 @@ public class AccountBranchDaoImpl implements AccountBranchDao {
 
     @Override
     public void update(AccountBranch entity, Integer id) {
-        setStatement(entity, id, updateAccountBranchQuery);
+        setStatement(entity, id, UPDATE_ACCOUNT_BRANCH_QUERY);
     }
 
     @Override
     public void updateByAccountID(AccountBranch entity, Integer accountID) {
-        setStatement(entity, accountID, updateAccountBranchByAccountIDQuery);
+        setStatement(entity, accountID, UPDATE_ACCOUNT_BRANCH_BY_ACCOUNT_ID_QUERY);
     }
 
     @Override
     public AccountBranch getEntityById(Integer id) {
         AccountBranch accountBranch = new AccountBranch();
         try {
-            statement = connection.prepareStatement(getAccountBranchQuery);
+            statement = connection.prepareStatement(SELECT_FROM_ACCOUNT_BRANCH_WHERE_ID);
             ResultSet rs = statement.executeQuery();
             statement.setInt(1, id);
             while(rs.next()) {
@@ -65,7 +65,7 @@ public class AccountBranchDaoImpl implements AccountBranchDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteAccountBranchQuery);
+            statement = connection.prepareStatement(DELETE_FROM_ACCOUNT_BRANCH_WHERE_ACCOUNT_ID);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -77,7 +77,7 @@ public class AccountBranchDaoImpl implements AccountBranchDao {
     @Override
     public void deleteByAccountID(Integer accountID) {
         try {
-            statement = connection.prepareStatement(deleteAccountBranchQuery);
+            statement = connection.prepareStatement(DELETE_FROM_ACCOUNT_BRANCH_WHERE_ACCOUNT_ID);
             statement.setInt(1, accountID);
             PermissionUtil.setForeignKeyChecks(false, connection);
             statement.execute();
@@ -90,7 +90,7 @@ public class AccountBranchDaoImpl implements AccountBranchDao {
     @Override
     public boolean insert(AccountBranch entity) {
         try {
-            statement = connection.prepareStatement(insertAccountBranchQuery);
+            statement = connection.prepareStatement(INSERT_ACCOUNT_BRANCH_QUERY);
             statement.setInt(1, entity.getAccountID());
             statement.setInt(2, entity.getBranchID());
             PermissionUtil.setForeignKeyChecks(false, connection);

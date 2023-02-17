@@ -20,7 +20,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public List<Employee> getAll() {
         List<Employee> employees = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllEmployeesQuery);
+            statement = connection.prepareStatement(SELECT_ALL_EMPLOYEES_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 employees.add(getEmployeeFromResultSet(resultSet));
@@ -34,7 +34,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     @Override
     public void update(Employee employee, Integer id) {
         try {
-            statement = connection.prepareStatement(updateEmployeeQuery);
+            statement = connection.prepareStatement(UPDATE_EMPLOYEE_QUERY);
             setStatement(statement, employee);
             statement.setInt(6, id);
             statement.executeUpdate();
@@ -47,7 +47,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Employee getEntityById(Integer id) {
         Employee employee = new Employee();
         try {
-            statement = connection.prepareStatement(getEmployeeQuery);
+            statement = connection.prepareStatement(GET_EMPLOYEE_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -66,7 +66,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteEmployeeQuery);
+            statement = connection.prepareStatement(DELETE_EMPLOYEE_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -78,7 +78,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
     @Override
     public boolean insert(Employee employee) {
         try {
-            statement = connection.prepareStatement(insertEmployeeQuery);
+            statement = connection.prepareStatement(INSERT_EMPLOYEE_QUERY);
             setStatement(statement, employee);
             return statement.execute();
         } catch (SQLException e) {

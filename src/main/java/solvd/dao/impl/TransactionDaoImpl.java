@@ -16,7 +16,7 @@ public class TransactionDaoImpl implements TransactionDao {
     public List<Transaction> getAll() {
         List<Transaction> transactions = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllTransactionsQuery);
+            statement = connection.prepareStatement(SELECT_ALL_TRANSACTIONS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 transactions.add(getTransactionFromResultSet(resultSet));
@@ -30,7 +30,7 @@ public class TransactionDaoImpl implements TransactionDao {
     @Override
     public void update(Transaction entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateTransactionQuery);
+            statement = connection.prepareStatement(UPDATE_TRANSACTION_QUERY);
             setStatement(statement, entity);
             statement.setInt(7, id);
             statement.executeUpdate();
@@ -43,7 +43,7 @@ public class TransactionDaoImpl implements TransactionDao {
     public Transaction getEntityById(Integer id) {
         Transaction transaction = new Transaction();
         try {
-            statement = connection.prepareStatement(getTransactionQuery);
+            statement = connection.prepareStatement(GET_TRANSACTION_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -63,7 +63,7 @@ public class TransactionDaoImpl implements TransactionDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteTransactionQuery);
+            statement = connection.prepareStatement(DELETE_TRANSACTION_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -75,7 +75,7 @@ public class TransactionDaoImpl implements TransactionDao {
     @Override
     public boolean insert(Transaction entity) {
         try {
-            statement = connection.prepareStatement(insertTransactionQuery);
+            statement = connection.prepareStatement(INSERT_TRANSACTION_QUERY);
             setStatement(statement, entity);
             return statement.execute();
         } catch (SQLException e) {
@@ -86,7 +86,7 @@ public class TransactionDaoImpl implements TransactionDao {
 
     public void deleteByTypeId(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteTransactionByTypeIdQuery);
+            statement = connection.prepareStatement(DELETE_TRANSACTION_BY_TYPE_ID_QUERY);
             statement.setInt(1, id);
             statement.execute();
         } catch (SQLException e) {

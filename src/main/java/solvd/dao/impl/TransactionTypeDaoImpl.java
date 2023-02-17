@@ -20,7 +20,7 @@ public class TransactionTypeDaoImpl implements TransactionTypeDao {
     public List<TransactionType> getAll() {
         List<TransactionType> transactionTypes = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllTransactionTypesQuery);
+            statement = connection.prepareStatement(SELECT_ALL_TRANSACTION_TYPES_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 transactionTypes.add(new TransactionType(
@@ -36,7 +36,7 @@ public class TransactionTypeDaoImpl implements TransactionTypeDao {
     @Override
     public void update(TransactionType entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateTransactionTypeQuery);
+            statement = connection.prepareStatement(UPDATE_TRANSACTION_TYPE_QUERY);
             statement.setString(1, entity.getDescription());
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -49,7 +49,7 @@ public class TransactionTypeDaoImpl implements TransactionTypeDao {
     public TransactionType getEntityById(Integer id) {
         TransactionType transactionType = new TransactionType();
         try {
-            statement = connection.prepareStatement(getTransactionTypeByIdQuery);
+            statement = connection.prepareStatement(GET_TRANSACTION_TYPE_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -64,7 +64,7 @@ public class TransactionTypeDaoImpl implements TransactionTypeDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteTransactionTypeQuery);
+            statement = connection.prepareStatement(DELETE_TRANSACTION_TYPE_QUERY);
             statement.setInt(1, id);
             PermissionUtil.setForeignKeyChecks(false, connection);
             new TransactionDaoImpl().deleteByTypeId(id);
@@ -78,7 +78,7 @@ public class TransactionTypeDaoImpl implements TransactionTypeDao {
     @Override
     public boolean insert(TransactionType entity) {
         try {
-            statement = connection.prepareStatement(insertTransactionTypeQuery);
+            statement = connection.prepareStatement(INSERT_TRANSACTION_TYPE_QUERY);
             statement.setString(1, entity.getDescription());
             return statement.execute();
         } catch (SQLException e) {

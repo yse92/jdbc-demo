@@ -19,7 +19,7 @@ public class AccountTypeDaoImpl implements AccountTypeDao {
     public List<AccountType> getAll() {
         List<AccountType> accountTypes = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllAccountTypesQuery);
+            statement = connection.prepareStatement(SELECT_ALL_ACCOUNT_TYPES_QUERY);
             ResultSet resultSet =  statement.executeQuery();
             while (resultSet.next()) {
                 accountTypes.add(new AccountType(
@@ -35,7 +35,7 @@ public class AccountTypeDaoImpl implements AccountTypeDao {
     @Override
     public void update(AccountType entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateAccountTypeQuery);
+            statement = connection.prepareStatement(UPDATE_ACCOUNT_TYPE_QUERY);
             statement.setString(1, entity.getDescription());
             statement.setInt(2, id);
             statement.executeUpdate();
@@ -48,7 +48,7 @@ public class AccountTypeDaoImpl implements AccountTypeDao {
     public AccountType getEntityById(Integer id) {
         AccountType accountType = new AccountType();
         try {
-            statement = connection.prepareStatement(getAccountTypeByIdQuery);
+            statement = connection.prepareStatement(GET_ACCOUNT_TYPE_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -63,7 +63,7 @@ public class AccountTypeDaoImpl implements AccountTypeDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteAccountTypeQuery);
+            statement = connection.prepareStatement(DELETE_ACCOUNT_TYPE_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -75,7 +75,7 @@ public class AccountTypeDaoImpl implements AccountTypeDao {
     @Override
     public boolean insert(AccountType entity) {
         try {
-            statement = connection.prepareStatement(insertAccountTypeQuery);
+            statement = connection.prepareStatement(INSERT_ACCOUNT_TYPE_QUERY);
             statement.setString(1, entity.getDescription());
             return statement.execute();
         } catch (SQLException e) {

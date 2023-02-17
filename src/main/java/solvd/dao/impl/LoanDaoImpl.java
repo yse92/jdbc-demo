@@ -23,7 +23,7 @@ public class LoanDaoImpl implements LoanDao {
     public List<Loan> getAll() {
         List<Loan> loans = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllLoansQuery);
+            statement = connection.prepareStatement(SELECT_ALL_LOANS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 loans.add(getLoanFromResultSet(resultSet));
@@ -37,7 +37,7 @@ public class LoanDaoImpl implements LoanDao {
     @Override
     public void update(Loan entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateLoanQuery);
+            statement = connection.prepareStatement(UPDATE_LOAN_QUERY);
             setStatement(statement, entity);
             statement.setInt(6, id);
             setForeignKeyChecks(false, connection);
@@ -52,7 +52,7 @@ public class LoanDaoImpl implements LoanDao {
     public Loan getEntityById(Integer id) {
         Loan loan = new Loan();
         try {
-            statement = connection.prepareStatement(getLoanByIdQuery);
+            statement = connection.prepareStatement(GET_LOAN_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -67,7 +67,7 @@ public class LoanDaoImpl implements LoanDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteLoanQuery);
+            statement = connection.prepareStatement(DELETE_LOAN_QUERY);
             statement.setInt(1, id);
             PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();
@@ -80,7 +80,7 @@ public class LoanDaoImpl implements LoanDao {
     @Override
     public boolean insert(Loan entity) {
         try {
-            statement = connection.prepareStatement(insertLoanQuery);
+            statement = connection.prepareStatement(INSERT_LOAN_QUERY);
             setStatement(statement, entity);
             PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();

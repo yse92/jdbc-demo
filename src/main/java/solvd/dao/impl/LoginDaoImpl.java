@@ -20,7 +20,7 @@ public class LoginDaoImpl implements LoginDao {
     public List<Login> getAll() {
         List<Login> logins = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllLoginsQuery);
+            statement = connection.prepareStatement(SELECT_ALL_LOGINS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 logins.add(getLoginFromResultSet(resultSet));
@@ -34,7 +34,7 @@ public class LoginDaoImpl implements LoginDao {
     @Override
     public void update(Login login, Integer id) {
         try {
-            statement = connection.prepareStatement(updateLoginQuery);
+            statement = connection.prepareStatement(UPDATE_LOGIN_QUERY);
             statement.setString(1, login.getName());
             statement.setString(2, login.getPassword());
             statement.setInt(3, id);
@@ -48,7 +48,7 @@ public class LoginDaoImpl implements LoginDao {
     public Login getEntityById(Integer id) {
         Login login = new Login();
         try {
-            statement = connection.prepareStatement(getLoginByIdQuery);
+            statement = connection.prepareStatement(GET_LOGIN_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -64,7 +64,7 @@ public class LoginDaoImpl implements LoginDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteLoginQuery);
+            statement = connection.prepareStatement(DELETE_LOGIN_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException ex) {
@@ -76,7 +76,7 @@ public class LoginDaoImpl implements LoginDao {
     @Override
     public boolean insert(Login login) {
         try {
-            statement = connection.prepareStatement(insertLoginQuery);
+            statement = connection.prepareStatement(INSERT_LOGIN_QUERY);
             setStatement(statement, login);
             return statement.execute();
         } catch (SQLException e) {

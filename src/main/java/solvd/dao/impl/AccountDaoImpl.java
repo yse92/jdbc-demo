@@ -21,7 +21,7 @@ public class AccountDaoImpl implements AccountDao {
     public List<Account> getAll() {
         List<Account> accounts = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllAccountsQuery);
+            statement = connection.prepareStatement(SELECT_ALL_ACCOUNTS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 accounts.add(getAccountFromResultSet(resultSet));
@@ -36,7 +36,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void update(Account entity, Integer id) {
         try {
-            statement = connection.prepareStatement(updateAccountQuery);
+            statement = connection.prepareStatement(UPDATE_ACCOUNT_QUERY);
             setStatement(statement, entity);
             statement.setInt(5, id);
             setForeignKeyChecks(false, connection);
@@ -51,7 +51,7 @@ public class AccountDaoImpl implements AccountDao {
     public Account getEntityById(Integer id) {
         Account account = new Account();
         try {
-            statement = connection.prepareStatement(getAccountByIdQuery);
+            statement = connection.prepareStatement(GET_ACCOUNT_BY_ID_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -66,7 +66,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteAccountQuery);
+            statement = connection.prepareStatement(DELETE_ACCOUNT_QUERY);
             statement.setInt(1, id);
             new AccountBranchDaoImpl().deleteByAccountID(id);
             PermissionUtil.setForeignKeyChecks(false, connection);
@@ -80,7 +80,7 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public boolean insert(Account entity) {
         try {
-            statement = connection.prepareStatement(insertAccountQuery);
+            statement = connection.prepareStatement(INSERT_ACCOUNT_QUERY);
             setStatement(statement, entity);
             PermissionUtil.setForeignKeyChecks(false, connection);
             return statement.execute();

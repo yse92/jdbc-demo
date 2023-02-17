@@ -19,7 +19,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public List<Customer> getAll() {
         List<Customer> customers = new ArrayList<>();
         try {
-            statement = connection.prepareStatement(selectAllCustomersQuery);
+            statement = connection.prepareStatement(SELECT_ALL_CUSTOMERS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 customers.add(getCustomerFromResultSet(resultSet));
@@ -33,7 +33,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public void update(Customer customer, Integer id) {
         try {
-            statement = connection.prepareStatement(updateCustomerQuery);
+            statement = connection.prepareStatement(UPDATE_CUSTOMER_QUERY);
             setStatement(statement, customer);
             statement.setInt(4, id);
             statement.executeUpdate();
@@ -46,7 +46,7 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer getEntityById(Integer id) {
         Customer customer = new Customer();
         try {
-            statement = connection.prepareStatement(getCustomerQuery);
+            statement = connection.prepareStatement(GET_CUSTOMER_QUERY);
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()) {
@@ -63,7 +63,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public boolean delete(Integer id) {
         try {
-            statement = connection.prepareStatement(deleteCustomerQuery);
+            statement = connection.prepareStatement(DELETE_CUSTOMER_QUERY);
             statement.setInt(1, id);
             return statement.execute();
         } catch (SQLException e) {
@@ -75,7 +75,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public boolean insert(Customer customer) {
         try {
-            statement = connection.prepareStatement(insertCustomerQuery);
+            statement = connection.prepareStatement(INSERT_CUSTOMER_QUERY);
             setStatement(statement, customer);
             return statement.execute();
         } catch (SQLException e) {
